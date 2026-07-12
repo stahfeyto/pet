@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pata Amiga — Pet Sitting &amp; Dog Walking</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --ink:#16241D;
+    --pine:#2C4A38;
+    --pine-light:#3E6650;
+    --sage:#7C9885;
+    --paper:#F5F2E7;
+    --sand:#EAE1CB;
+    --clay:#A8482F;
+    --clay-light:#C15F42;
+    --gold:#B98A34;
+    --white:#FFFFFF;
+    --line:rgba(22,36,29,0.12);
+    --shadow:0 20px 50px -20px rgba(22,36,29,0.25);
+    --radius:20px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    letter-spacing:-0.01em;
+    margin:0;
+    color:var(--ink);
+  }
+  p{margin:0;}
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+  .container{max-width:1180px;margin:0 auto;padding:0 24px;}
+  ::selection{background:var(--gold);color:var(--white);}
+  :focus-visible{outline:2px solid var(--clay);outline-offset:3px;border-radius:4px;}
+
+  /* buttons */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:14px 26px;border-radius:100px;font-weight:600;font-size:15px;
+    border:1px solid transparent;cursor:pointer;transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .3s;
+    font-family:'Inter',sans-serif;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--clay);color:var(--white);box-shadow:0 12px 24px -10px rgba(168,72,47,0.55);}
+  .btn-primary:hover{background:var(--clay-light);box-shadow:0 16px 30px -10px rgba(168,72,47,0.6);}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .btn-light{background:var(--white);color:var(--pine);}
+  .btn-light:hover{background:var(--sand);}
+  .btn-sm{padding:10px 18px;font-size:13.5px;}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+  /* nav */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(245,242,231,0.86);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;height:76px;}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:600;font-size:20px;}
+  .logo svg{width:30px;height:30px;}
+  .nav-links{display:flex;align-items:center;gap:32px;font-size:14.5px;font-weight:500;}
+  .nav-links a{opacity:.75;transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:8px;}
+  @media(max-width:900px){
+    .nav-links{display:none;}
+    .nav-cta .btn-ghost{display:none;}
+  }
+
+  /* hero */
+  .hero{padding:88px 0 60px;position:relative;overflow:hidden;}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;}
+  @media(max-width:960px){.hero-grid{grid-template-columns:1fr;gap:48px;}}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;
+    letter-spacing:.04em;text-transform:uppercase;color:var(--pine);
+    background:var(--sand);padding:7px 14px;border-radius:100px;margin-bottom:22px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--clay);}
+  .hero h1{font-size:clamp(38px,5.2vw,64px);line-height:1.04;}
+  .hero h1 em{font-style:italic;color:var(--clay);}
+  .hero p.lead{margin-top:22px;font-size:18px;max-width:480px;color:rgba(22,36,29,0.72);}
+  .hero-actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+  .hero-trust{display:flex;gap:26px;margin-top:40px;flex-wrap:wrap;}
+  .trust-item{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;color:rgba(22,36,29,0.7);}
+  .trust-item svg{width:18px;height:18px;color:var(--pine);flex-shrink:0;}
+
+  /* phone mockup - signature element */
+  .phone-wrap{display:flex;justify-content:center;position:relative;}
+  .phone{
+    width:290px;background:var(--ink);border-radius:34px;padding:14px;box-shadow:var(--shadow);
+    position:relative;animation:float 6s ease-in-out infinite;
+  }
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .phone-screen{background:#EDEAE0;border-radius:22px;overflow:hidden;min-height:430px;display:flex;flex-direction:column;}
+  .phone-bar{background:var(--pine);color:var(--white);padding:14px 16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;}
+  .phone-bar .avatar{width:28px;height:28px;border-radius:50%;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .phone-body{padding:16px 12px;display:flex;flex-direction:column;gap:10px;flex:1;}
+  .bubble{max-width:82%;padding:10px 13px;border-radius:14px;font-size:12.5px;background:var(--white);box-shadow:0 2px 6px rgba(0,0,0,.06);opacity:0;animation:pop .5s var(--ease) forwards;}
+  .bubble.me{align-self:flex-end;background:var(--pine);color:var(--white);border-bottom-right-radius:4px;}
+  .bubble.them{border-bottom-left-radius:4px;}
+  .bubble img{border-radius:8px;margin-top:6px;width:100%;}
+  .bubble .time{display:block;font-size:10px;opacity:.55;margin-top:4px;}
+  .bubble:nth-child(1){animation-delay:.3s;}
+  .bubble:nth-child(2){animation-delay:1.1s;}
+  .bubble:nth-child(3){animation-delay:1.9s;}
+  .bubble:nth-child(4){animation-delay:2.7s;}
+  @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+  .photo-block{background:linear-gradient(135deg,var(--sage),var(--pine-light));border-radius:8px;height:90px;margin-top:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;}
+
+  /* section basics */
+  section{padding:96px 0;}
+  .section-head{max-width:640px;margin:0 auto 56px;text-align:center;}
+  .section-head.left{margin:0 0 48px;text-align:left;}
+  .section-head .eyebrow{margin-bottom:16px;}
+  .section-head h2{font-size:clamp(30px,4vw,44px);line-height:1.1;}
+  .section-head p{margin-top:16px;font-size:16.5px;color:rgba(22,36,29,0.68);}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* how it works */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;}
+  @media(max-width:900px){.steps{grid-template-columns:1fr 1fr;}}
+  @media(max-width:560px){.steps{grid-template-columns:1fr;}}
+  .step{background:var(--white);border-radius:var(--radius);padding:28px 24px;border:1px solid var(--line);}
+  .step .num{font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:var(--clay);margin-bottom:14px;display:block;}
+  .step h3{font-size:17px;margin-bottom:8px;}
+  .step p{font-size:14px;color:rgba(22,36,29,0.65);}
+
+  /* species strip */
+  .species-strip{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:8px;}
+  .species-pill{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);padding:10px 18px;border-radius:100px;font-size:14px;font-weight:500;}
+
+  /* pricing */
+  .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:44px;background:var(--sand);padding:6px;border-radius:100px;width:fit-content;margin-left:auto;margin-right:auto;}
+  .tab{padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--ink);opacity:.6;transition:.25s;}
+  .tab.active{background:var(--ink);color:var(--white);opacity:1;}
+  .pricing-panel{display:none;}
+  .pricing-panel.active{display:block;}
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  @media(max-width:900px){.price-grid{grid-template-columns:1fr;}}
+  .price-card{
+    background:var(--white);border-radius:var(--radius);border:1px solid var(--line);
+    padding:32px 28px;position:relative;display:flex;flex-direction:column;
+    transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+  }
+  .price-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);}
+  .price-card.featured{background:var(--pine);color:var(--white);border-color:var(--pine);}
+  .price-card.featured .price-desc,.price-card.featured .duration{color:rgba(255,255,255,.75);}
+  .price-card.featured li{color:rgba(255,255,255,.9);}
+  .badge{position:absolute;top:-13px;left:28px;background:var(--clay);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:6px 14px;border-radius:100px;}
+  .duration{font-size:13px;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:.04em;}
+  .price-card h3{font-size:22px;margin-top:8px;}
+  .price-amount{display:flex;align-items:baseline;gap:4px;margin-top:16px;}
+  .price-amount .num{font-family:'Fraunces',serif;font-size:42px;font-weight:500;}
+  .price-amount .unit{font-size:14px;opacity:.65;}
+  .price-desc{font-size:14px;color:rgba(22,36,29,0.65);margin-top:10px;}
+  .price-card ul{list-style:none;padding:0;margin:22px 0 26px;display:flex;flex-direction:column;gap:10px;flex:1;}
+  .price-card li{font-size:14px;display:flex;gap:9px;color:rgba(22,36,29,0.78);}
+  .price-card li svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--clay);}
+  .price-card.featured li svg{color:var(--gold);}
+  .note-card{margin-top:24px;background:var(--sand);border-radius:16px;padding:20px 24px;font-size:14px;display:flex;gap:12px;align-items:flex-start;}
+  .note-card svg{width:20px;height:20px;flex-shrink:0;color:var(--pine);margin-top:1px;}
+
+  /* travel table */
+  .travel-table{background:var(--white);border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;margin-top:18px;}
+  .travel-row{display:flex;justify-content:space-between;padding:16px 24px;font-size:14.5px;border-bottom:1px solid var(--line);}
+  .travel-row:last-child{border-bottom:none;}
+  .travel-row span:last-child{font-weight:600;color:var(--pine);}
+
+  /* faq */
+  .faq-list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px;}
+  .faq-item{background:var(--white);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .faq-q{width:100%;text-align:left;background:none;border:none;padding:20px 22px;font-family:'Inter',sans-serif;font-size:15.5px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--ink);}
+  .faq-q svg{width:18px;height:18px;flex-shrink:0;transition:transform .35s var(--ease);color:var(--clay);}
+  .faq-item.open .faq-q svg{transform:rotate(45deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);}
+  .faq-a p{padding:0 22px 20px;font-size:14.5px;color:rgba(22,36,29,0.68);}
+
+  /* booking */
+  #marcar{background:var(--ink);color:var(--white);}
+  #marcar .section-head p{color:rgba(255,255,255,.65);}
+  #marcar .eyebrow{background:rgba(255,255,255,.1);color:var(--sand);}
+  .booking-card{background:var(--white);border-radius:24px;color:var(--ink);max-width:760px;margin:0 auto;box-shadow:var(--shadow);overflow:hidden;}
+  .progress{display:flex;gap:6px;padding:24px 32px 0;}
+  .progress span{height:4px;flex:1;background:var(--line);border-radius:100px;overflow:hidden;}
+  .progress span i{display:block;height:100%;width:0;background:var(--clay);transition:width .5s var(--ease);}
+  .step-label{padding:14px 32px 0;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--clay);}
+  .form-step{padding:16px 32px 32px;display:none;}
+  .form-step.active{display:block;}
+  .form-step h3{font-size:24px;margin-bottom:6px;}
+  .form-step .hint{font-size:14px;color:rgba(22,36,29,0.6);margin-bottom:26px;}
+  .option-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:560px){.option-grid{grid-template-columns:1fr;}}
+  .option-card{border:1.5px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;transition:.2s;position:relative;}
+  .option-card:hover{border-color:var(--sage);}
+  .option-card.selected{border-color:var(--clay);background:#FBF3EF;}
+  .option-card .oc-title{font-weight:600;font-size:15px;}
+  .option-card .oc-sub{font-size:13px;color:rgba(22,36,29,0.6);margin-top:4px;}
+  .option-card .oc-price{position:absolute;top:16px;right:16px;font-weight:700;font-size:14px;color:var(--clay);}
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:560px){.field-grid{grid-template-columns:1fr;}}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+  .field.full{grid-column:1/-1;}
+  .field label{font-size:13px;font-weight:600;}
+  .field input,.field select,.field textarea{
+    border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-family:'Inter',sans-serif;font-size:14.5px;background:var(--paper);
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--clay);outline:none;}
+  .field textarea{resize:vertical;min-height:80px;}
+  .qty-stepper{display:flex;align-items:center;gap:14px;}
+  .qty-stepper button{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:var(--white);font-size:18px;cursor:pointer;}
+  .qty-stepper span{font-size:18px;font-weight:600;min-width:20px;text-align:center;}
+  .form-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+  .summary-box{background:var(--paper);border-radius:14px;padding:20px;margin-top:6px;}
+  .summary-row{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;}
+  .summary-row.total{border-top:1px solid var(--line);margin-top:8px;padding-top:14px;font-weight:700;font-size:16px;}
+  .error-text{color:var(--clay);font-size:12.5px;display:none;}
+
+  /* confirmation */
+  #confirmacao{display:none;padding:120px 0;}
+  .confirm-box{max-width:560px;margin:0 auto;text-align:center;}
+  .confirm-icon{width:76px;height:76px;border-radius:50%;background:var(--pine);display:flex;align-items:center;justify-content:center;margin:0 auto 26px;}
+  .confirm-icon svg{width:36px;height:36px;color:#fff;}
+  .confirm-ref{display:inline-block;margin-top:18px;background:var(--sand);padding:8px 18px;border-radius:100px;font-weight:700;letter-spacing:.03em;}
+  .confirm-details{text-align:left;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:32px;font-size:14.5px;}
+  .confirm-details .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);}
+  .confirm-details .row:last-child{border:none;}
+
+  /* footer */
+  footer{background:var(--ink);color:rgba(255,255,255,.7);padding:64px 0 32px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;}
+  @media(max-width:700px){.footer-grid{grid-template-columns:1fr;}}
+  .footer-grid h4{color:#fff;font-size:14px;margin-bottom:16px;font-weight:600;}
+  .footer-grid ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:14px;}
+  .footer-bottom{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;font-size:12.5px;flex-wrap:wrap;gap:10px;}
+  .footer-logo{display:flex;align-items:center;gap:10px;color:#fff;font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin-bottom:14px;}
+
+  /* sticky mobile cta */
+  .sticky-cta{position:fixed;bottom:16px;left:16px;right:16px;z-index:40;display:none;}
+  .sticky-cta .btn{width:100%;}
+  @media(max-width:640px){.sticky-cta.show{display:block;}}
+
+  /* admin demo */
+  #admin{display:none;background:var(--paper);min-height:100vh;padding:40px 0 100px;}
+  .admin-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:14px;}
+  .admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+  @media(max-width:800px){.admin-stats{grid-template-columns:1fr 1fr;}}
+  .admin-stat{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px;}
+  .admin-stat .n{font-family:'Fraunces',serif;font-size:28px;}
+  .admin-stat .l{font-size:12.5px;color:rgba(22,36,29,0.6);margin-top:4px;}
+  .admin-table{background:var(--white);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .admin-row{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr .8fr;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);font-size:13.5px;align-items:center;}
+  .admin-row.head{font-weight:700;background:var(--sand);font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
+  .admin-row:last-child{border-bottom:none;}
+  .status-pill{padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:700;width:fit-content;}
+  .status-pending{background:#FBEBD8;color:var(--gold);}
+  .status-confirmed{background:#DEE9DF;color:var(--pine);}
+  .empty-state{padding:60px 20px;text-align:center;color:rgba(22,36,29,0.55);font-size:14.5px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001s !important;transition-duration:0.001s !important;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ PUBLIC SITE ============ -->
+<div id="site">
+
+<header>
+  <div class="container nav">
+    <a href="#home" class="logo">
+      <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#2C4A38"/><path d="M11 13.2c1 0 1.8-1 1.8-2.3S12 8.6 11 8.6s-1.8 1-1.8 2.3 .8 2.3 1.8 2.3Zm10 0c1 0 1.8-1 1.8-2.3S22 8.6 21 8.6s-1.8 1-1.8 2.3 .8 2.3 1.8 2.3Zm-14.3 3.6c.9 0 1.6-.9 1.6-2s-.7-2-1.6-2-1.6.9-1.6 2 .7 2 1.6 2Zm18.6 0c.9 0 1.6-.9 1.6-2s-.7-2-1.6-2-1.6.9-1.6 2 .7 2 1.6 2ZM16 15.4c-2.9 0-6.2 2.6-6.2 5.7 0 1.8 1.5 2.9 3.3 2.9 1.2 0 1.9-.5 2.9-.5s1.7.5 2.9.5c1.8 0 3.3-1.1 3.3-2.9 0-3.1-3.3-5.7-6.2-5.7Z" fill="#fff"/></svg>
+      Pata Amiga
+    </a>
+    <nav class="nav-links">
+      <a href="#servicos">Serviços</a>
+      <a href="#precos">Preços</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#faq" class="btn btn-ghost btn-sm">Dúvidas</a>
+      <a href="#marcar" class="btn btn-primary btn-sm">Marcar serviço</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Pet sitting &amp; dog walking ao seu ritmo</span>
+      <h1>Cuidado a sério para quem<br><em>não pode esperar</em>.</h1>
+      <p class="lead">Passeios, visitas ao domicílio e companhia para cães, gatos e outros animais — com fotos, vídeos e atualizações a cada visita, para nunca ficar sem saber como está o seu animal.</p>
+      <div class="hero-actions">
+        <a href="#marcar" class="btn btn-primary">Marcar um serviço</a>
+        <a href="#precos" class="btn btn-ghost">Ver preços</a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Atualizações por WhatsApp</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Instruções sempre respeitadas</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Emergência veterinária incluída</div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-bar"><span class="avatar">🐾</span> Passeio da Bella — em direto</div>
+          <div class="phone-body">
+            <div class="bubble them">Saímos agora para o passeio completo! ☀️<span class="time">15:02</span></div>
+            <div class="bubble them">A Bella está muito bem disposta hoje 🐕<div class="photo-block">📷</div><span class="time">15:14</span></div>
+            <div class="bubble me">Que bom, obrigada pela atualização!<span class="time">15:15</span></div>
+            <div class="bubble them">De volta a casa, água fresca e patas limpas ✔️<span class="time">15:34</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIES -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="species-strip reveal">
+      <span class="species-pill">🐶 Cães</span>
+      <span class="species-pill">🐱 Gatos</span>
+      <span class="species-pill">🐰 Coelhos</span>
+      <span class="species-pill">🐹 Hamsters &amp; porquinhos-da-índia</span>
+      <span class="species-pill">🦜 Aves</span>
+      <span class="species-pill">🐠 Peixes</span>
+      <span class="species-pill">🦔 Furões</span>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section id="como-funciona">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Como funciona</span>
+      <h2>Marcar demora dois minutos.</h2>
+      <p>Um processo simples, pensado para lhe dar confiança do primeiro ao último passo.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><span class="num">01</span><h3>Escolhe o serviço</h3><p>Passeio, visita ao domicílio ou house sitting — consoante a rotina do seu animal.</p></div>
+      <div class="step reveal"><span class="num">02</span><h3>Partilha os detalhes</h3><p>Espécie, necessidades especiais, medicação e tudo o que precisamos de saber.</p></div>
+      <div class="step reveal"><span class="num">03</span><h3>Confirmamos consigo</h3><p>Validamos disponibilidade e horário, e combinamos os últimos detalhes.</p></div>
+      <div class="step reveal"><span class="num">04</span><h3>Acompanha em tempo real</h3><p>Fotos, vídeos e mensagens a cada visita ou passeio.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS / PREÇOS -->
+<section id="servicos" style="background:var(--sand);">
+  <div class="container" id="precos">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Serviços &amp; preços</span>
+      <h2>Preços claros, sem surpresas.</h2>
+      <p>Valores base — podem variar consoante número de animais, localização e necessidades específicas.</p>
+    </div>
+
+    <div class="tabs reveal">
+      <button class="tab active" data-tab="walk">Dog Walking</button>
+      <button class="tab" data-tab="sit">Pet Sitting</button>
+      <button class="tab" data-tab="house">House Sitting</button>
+    </div>
+
+    <!-- Dog walking -->
+    <div class="pricing-panel active" data-panel="walk">
+      <div class="price-grid reveal">
+        <div class="price-card">
+          <span class="duration">20–30 minutos</span>
+          <h3>Passeio Curto</h3>
+          <div class="price-amount"><span class="num">7€</span><span class="unit">/ passeio</span></div>
+          <p class="price-desc">Ideal para cachorros, cães seniores ou quem precisa de várias saídas ao longo do dia.</p>
+        </div>
+        <div class="price-card featured">
+          <span class="badge">Mais procurado</span>
+          <span class="duration">60 minutos</span>
+          <h3>Passeio Completo</h3>
+          <div class="price-amount"><span class="num">12€</span><span class="unit">/ passeio</span></div>
+          <p class="price-desc">Caminhada a bom ritmo, tempo para explorar e socializar.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Tempo para farejar e explorar</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Socialização quando adequada</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Alimentação pós-passeio, se solicitada</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Limpeza das patas antes de entrar</li>
+          </ul>
+        </div>
+        <div class="price-card">
+          <span class="duration">Mesma habitação</span>
+          <h3>Cão Extra</h3>
+          <div class="price-amount"><span class="num">+2–3€</span><span class="unit">/ cão</span></div>
+          <p class="price-desc">Para famílias com mais do que um cão — valor consoante o porte do animal.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet sitting -->
+    <div class="pricing-panel" data-panel="sit">
+      <div class="price-grid reveal">
+        <div class="price-card">
+          <span class="duration">30 minutos</span>
+          <h3>Visita Rápida</h3>
+          <div class="price-amount"><span class="num">10€</span><span class="unit">/ visita</span></div>
+          <p class="price-desc">Ideal para gatos independentes ou cuidados essenciais.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Alimentação e água fresca</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Limpeza da caixa de areia</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Foto e atualização ao tutor</li>
+          </ul>
+        </div>
+        <div class="price-card featured">
+          <span class="badge">Recomendada</span>
+          <span class="duration">60 minutos</span>
+          <h3>Visita Standard</h3>
+          <div class="price-amount"><span class="num">16€</span><span class="unit">/ visita</span></div>
+          <p class="price-desc">Ideal para cães, gatos sociáveis ou casas com vários animais.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Passeio incluído para cães</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Brincadeiras e enriquecimento mental</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Administração de medicação</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Fotos, vídeos e pequeno relatório</li>
+          </ul>
+        </div>
+        <div class="price-card">
+          <span class="duration">90 minutos</span>
+          <h3>Visita Premium</h3>
+          <div class="price-amount"><span class="num">22€</span><span class="unit">/ visita</span></div>
+          <p class="price-desc">Todos os cuidados da Standard, com mais tempo dedicado.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Passeio mais longo</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Reforço de comandos simples</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Maior acompanhamento a seniores</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note-card reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+        Também cuidamos de coelhos, hamsters, porquinhos-da-índia, furões, aves e peixes — mesmos horários e valores das visitas de Pet Sitting.
+      </div>
+    </div>
+
+    <!-- House sitting -->
+    <div class="pricing-panel" data-panel="house">
+      <div class="price-grid reveal" style="grid-template-columns:1fr;max-width:420px;margin:0 auto;">
+        <div class="price-card featured">
+          <span class="duration">Por noite</span>
+          <h3>House Sitting</h3>
+          <div class="price-amount"><span class="num">40–50€</span><span class="unit">/ noite</span></div>
+          <p class="price-desc">Companhia contínua em casa do tutor — ideal para cães que não devem ficar sozinhos, animais com ansiedade de separação, ou para manter a rotina habitual.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- travel -->
+    <div class="reveal" style="margin-top:56px;max-width:640px;">
+      <h3 style="font-size:19px;margin-bottom:6px;">Deslocações</h3>
+      <p style="font-size:14px;color:rgba(22,36,29,0.65);">Calculadas a partir da nossa área habitual de atuação.</p>
+      <div class="travel-table">
+        <div class="travel-row"><span>Até 5 km</span><span>Gratuito</span></div>
+        <div class="travel-row"><span>5 a 10 km</span><span>+2€</span></div>
+        <div class="travel-row"><span>10 a 20 km</span><span>+5€</span></div>
+        <div class="travel-row"><span>20 a 30 km</span><span>+8€</span></div>
+        <div class="travel-row"><span>Mais de 30 km</span><span>Sob orçamento</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INCLUÍDO SEMPRE -->
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Sem custo extra</span>
+      <h2>Pequenos cuidados, sempre incluídos.</h2>
+    </div>
+    <div class="steps reveal">
+      <div class="step">💧<h3 style="margin-top:10px;">Regar plantas</h3></div>
+      <div class="step">📬<h3 style="margin-top:10px;">Recolha de correio</h3></div>
+      <div class="step">🪟<h3 style="margin-top:10px;">Abrir/fechar estores</h3></div>
+      <div class="step">📸<h3 style="margin-top:10px;">Fotos e vídeos por visita</h3></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--sand);">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Perguntas frequentes</span>
+      <h2>Ainda com dúvidas?</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q">Como funciona a marcação de um serviço? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Preenche o formulário de marcação com os dados do animal e o serviço pretendido. Confirmamos disponibilidade e horário consigo antes de qualquer visita.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Os preços podem variar? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Os valores apresentados são base. Podem variar consoante o número de animais, a localização e necessidades específicas — sempre combinado antes da confirmação.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">O que acontece em caso de emergência com o meu animal? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Contactamos imediatamente o tutor perante qualquer situação anormal, e tratamos do transporte ao veterinário em caso de emergência.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Recebo atualizações durante o serviço? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Sim — envio de fotografias, vídeos e atualizações por WhatsApp em todas as visitas e passeios.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Que animais são cuidados? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Cães, gatos, coelhos, hamsters, porquinhos-da-índia, furões, aves e peixes.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Posso pedir administração de medicação? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div class="faq-a"><p>Sim, sempre que necessário — indica-o no formulário de marcação para seguirmos rigorosamente as instruções.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section id="marcar">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Marcação online</span>
+      <h2>Vamos tratar do seu animal.</h2>
+      <p>Cinco passos rápidos — sem custos até confirmarmos consigo.</p>
+    </div>
+
+    <div class="booking-card reveal">
+      <div class="progress">
+        <span><i id="p1"></i></span><span><i id="p2"></i></span><span><i id="p3"></i></span><span><i id="p4"></i></span><span><i id="p5"></i></span>
+      </div>
+      <div class="step-label" id="stepLabel">Passo 1 de 5</div>
+
+      <form id="bookingForm">
+        <!-- STEP 1: service category + variant -->
+        <div class="form-step active" data-step="1">
+          <h3>Que serviço precisa?</h3>
+          <p class="hint">Escolha a categoria e depois a opção específica.</p>
+          <div class="option-grid" id="categoryOptions">
+            <div class="option-card" data-cat="walk"><div class="oc-title">🚶 Dog Walking</div><div class="oc-sub">A partir de 7€</div></div>
+            <div class="option-card" data-cat="sit"><div class="oc-title">🏡 Pet Sitting</div><div class="oc-sub">A partir de 10€</div></div>
+            <div class="option-card" data-cat="house"><div class="oc-title">🌙 House Sitting</div><div class="oc-sub">40–50€ / noite</div></div>
+          </div>
+          <div id="variantOptions" class="option-grid" style="margin-top:16px;"></div>
+          <span class="error-text" id="err1">Escolha um serviço para continuar.</span>
+        </div>
+
+        <!-- STEP 2: animal details -->
+        <div class="form-step" data-step="2">
+          <h3>Fale-nos do seu animal</h3>
+          <p class="hint">Estes dados ajudam-nos a personalizar o cuidado.</p>
+          <div class="field-grid">
+            <div class="field"><label>Nome do animal</label><input type="text" id="petName" placeholder="Ex: Bella"></div>
+            <div class="field"><label>Espécie</label>
+              <select id="petSpecies">
+                <option value="Cão">Cão</option><option value="Gato">Gato</option><option value="Coelho">Coelho</option>
+                <option value="Hamster">Hamster</option><option value="Porquinho-da-índia">Porquinho-da-índia</option>
+                <option value="Furão">Furão</option><option value="Ave">Ave</option><option value="Peixe">Peixe</option><option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div class="field"><label>Idade</label><input type="text" id="petAge" placeholder="Ex: 3 anos"></div>
+            <div class="field"><label>Quantidade de animais</label>
+              <div class="qty-stepper"><button type="button" id="qtyMinus">–</button><span id="qtyVal">1</span><button type="button" id="qtyPlus">+</button></div>
+            </div>
+            <div class="field full"><label>Necessidades especiais</label><input type="text" id="petNeeds" placeholder="Ex: ansiedade de separação, mobilidade reduzida…"></div>
+            <div class="field full"><label>Medicação (se aplicável)</label><input type="text" id="petMeds" placeholder="Ex: 1 comprimido às 9h e às 21h"></div>
+          </div>
+        </div>
+
+        <!-- STEP 3: when & where -->
+        <div class="form-step" data-step="3">
+          <h3>Quando e onde</h3>
+          <p class="hint">Os horários são sempre confirmados previamente consigo.</p>
+          <div class="field-grid">
+            <div class="field"><label>Data</label><input type="date" id="bookDate"></div>
+            <div class="field"><label>Hora</label><input type="time" id="bookTime"></div>
+            <div class="field full"><label>Morada</label><input type="text" id="bookAddress" placeholder="Rua, número, cidade"></div>
+            <div class="field"><label>Distância aproximada da nossa base</label>
+              <select id="bookKm">
+                <option value="0">Até 5 km — grátis</option>
+                <option value="2">5 a 10 km — +2€</option>
+                <option value="5">10 a 20 km — +5€</option>
+                <option value="8">20 a 30 km — +8€</option>
+                <option value="-1">Mais de 30 km — sob orçamento</option>
+              </select>
+            </div>
+            <div class="field" id="nightsField" style="display:none;"><label>Número de noites</label><input type="number" min="1" value="1" id="bookNights"></div>
+          </div>
+        </div>
+
+        <!-- STEP 4: contact -->
+        <div class="form-step" data-step="4">
+          <h3>Os seus dados</h3>
+          <p class="hint">Para confirmarmos a marcação e mantê-lo(a) atualizado(a).</p>
+          <div class="field-grid">
+            <div class="field"><label>Nome</label><input type="text" id="ownerName" placeholder="O seu nome"></div>
+            <div class="field"><label>Telefone</label><input type="tel" id="ownerPhone" placeholder="9xx xxx xxx"></div>
+            <div class="field full"><label>Email</label><input type="email" id="ownerEmail" placeholder="nome@email.com"></div>
+            <div class="field full"><label>Observações</label><textarea id="ownerNotes" placeholder="Algo mais que devamos saber?"></textarea></div>
+          </div>
+        </div>
+
+        <!-- STEP 5: review -->
+        <div class="form-step" data-step="5">
+          <h3>Reveja a sua marcação</h3>
+          <p class="hint">Confirmamos consigo por WhatsApp ou email antes de qualquer serviço.</p>
+          <div class="summary-box" id="summaryBox"></div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="backBtn" style="visibility:hidden;">Voltar</button>
+          <button type="button" class="btn btn-primary" id="nextBtn">Continuar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CONFIRMATION -->
+<section id="confirmacao">
+  <div class="container">
+    <div class="confirm-box">
+      <div class="confirm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
+      <h2>Pedido recebido!</h2>
+      <p style="margin-top:12px;color:rgba(22,36,29,0.68);">Entraremos em contacto em breve para confirmar disponibilidade, horário e valor final.</p>
+      <div class="confirm-ref">Referência: <span id="refNum"></span></div>
+      <div class="confirm-details" id="confirmDetails"></div>
+      <a href="#home" class="btn btn-primary" style="margin-top:32px;" id="backHomeBtn">Voltar ao início</a>
+    </div>
+  </div>
+</section>
+
+<a href="#marcar" class="sticky-cta" id="stickyCta"><button class="btn btn-primary">Marcar serviço</button></a>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">🐾 Pata Amiga</div>
+        <p style="font-size:14px;max-width:280px;">Pet sitting e dog walking com cuidado, transparência e atualizações em tempo real.</p>
+      </div>
+      <div>
+        <h4>Navegação</h4>
+        <ul><li><a href="#servicos">Serviços</a></li><li><a href="#precos">Preços</a></li><li><a href="#faq">FAQ</a></li><li><a href="#marcar">Marcar</a></li></ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul><li>WhatsApp disponível após marcação</li><li>Resposta em horário útil</li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Pata Amiga. Todos os direitos reservados.</span>
+      <a href="#" id="adminLink" style="opacity:.5;">Área de administração</a>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<!-- ============ ADMIN DEMO ============ -->
+<div id="admin">
+  <div class="container">
+    <div class="admin-topbar">
+      <div>
+        <h2 style="font-size:26px;">Painel administrativo <span style="font-size:13px;font-weight:600;color:var(--clay);background:var(--sand);padding:4px 10px;border-radius:100px;vertical-align:middle;">DEMO</span></h2>
+        <p style="font-size:14px;color:rgba(22,36,29,0.6);margin-top:4px;">Marcações feitas nesta sessão do protótipo.</p>
+      </div>
+      <a href="#home" id="exitAdmin" class="btn btn-ghost btn-sm">← Voltar ao site</a>
+    </div>
+    <div class="admin-stats">
+      <div class="admin-stat"><div class="n" id="statTotal">0</div><div class="l">Marcações</div></div>
+      <div class="admin-stat"><div class="n" id="statPending">0</div><div class="l">Por confirmar</div></div>
+      <div class="admin-stat"><div class="n" id="statAnimals">0</div><div class="l">Animais registados</div></div>
+      <div class="admin-stat"><div class="n" id="statRevenue">0€</div><div class="l">Valor estimado</div></div>
+    </div>
+    <div class="admin-table" id="adminTable">
+      <div class="admin-row head"><span>Cliente</span><span>Serviço</span><span>Data</span><span>Animal</span><span>Estado</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ---------- reveal on scroll ----------
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.15});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // ---------- nav sticky cta on mobile ----------
+  const stickyCta = document.getElementById('stickyCta');
+  const marcarSection = document.getElementById('marcar');
+  window.addEventListener('scroll', ()=>{
+    const y = window.scrollY;
+    const marcarTop = marcarSection.offsetTop;
+    stickyCta.classList.toggle('show', y > 500 && y < marcarTop - 200);
+  });
+
+  // ---------- pricing tabs ----------
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.pricing-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelector(`.pricing-panel[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
+  // ---------- faq accordion ----------
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', ()=>{
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i=>{ i.classList.remove('open'); i.querySelector('.faq-a').style.maxHeight=null; });
+      if(!isOpen){ item.classList.add('open'); a.style.maxHeight = a.scrollHeight+'px'; }
+    });
+  });
+
+  // ---------- booking data ----------
+  const SERVICES = {
+    walk: { label:'Dog Walking', variants:[
+      {id:'curto', label:'Passeio Curto', sub:'20–30 min', price:7},
+      {id:'completo', label:'Passeio Completo', sub:'60 min · mais procurado', price:12},
+    ]},
+    sit: { label:'Pet Sitting', variants:[
+      {id:'rapida', label:'Visita Rápida', sub:'30 min', price:10},
+      {id:'standard', label:'Visita Standard', sub:'60 min · recomendada', price:16},
+      {id:'premium', label:'Visita Premium', sub:'90 min', price:22},
+    ]},
+    house: { label:'House Sitting', variants:[
+      {id:'house', label:'House Sitting', sub:'por noite', price:45},
+    ]}
+  };
+
+  let state = { cat:null, variant:null, qty:1 };
+  const bookings = []; // in-memory demo store for admin panel
+
+  const categoryCards = document.querySelectorAll('#categoryOptions .option-card');
+  const variantWrap = document.getElementById('variantOptions');
+  categoryCards.forEach(card=>{
+    card.addEventListener('click', ()=>{
+      categoryCards.forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.cat = card.dataset.cat;
+      state.variant = null;
+      renderVariants();
+      document.getElementById('nightsField').style.display = state.cat === 'house' ? 'flex' : 'none';
+      document.getElementById('err1').style.display='none';
+    });
+  });
+
+  function renderVariants(){
+    const svc = SERVICES[state.cat];
+    variantWrap.innerHTML = '';
+    svc.variants.forEach(v=>{
+      const div = document.createElement('div');
+      div.className = 'option-card';
+      div.dataset.variant = v.id;
+      div.innerHTML = `<div class="oc-price">${v.price}€</div><div class="oc-title">${v.label}</div><div class="oc-sub">${v.sub}</div>`;
+      div.addEventListener('click', ()=>{
+        variantWrap.querySelectorAll('.option-card').forEach(c=>c.classList.remove('selected'));
+        div.classList.add('selected');
+        state.variant = v;
+        document.getElementById('err1').style.display='none';
+      });
+      variantWrap.appendChild(div);
+    });
+  }
+
+  // qty stepper
+  const qtyVal = document.getElementById('qtyVal');
+  document.getElementById('qtyMinus').addEventListener('click', ()=>{ state.qty=Math.max(1,state.qty-1); qtyVal.textContent=state.qty; });
+  document.getElementById('qtyPlus').addEventListener('click', ()=>{ state.qty=Math.min(6,state.qty+1); qtyVal.textContent=state.qty; });
+
+  // ---------- multi-step navigation ----------
+  const steps = document.querySelectorAll('.form-step');
+  const progressBars = ['p1','p2','p3','p4','p5'].map(id=>document.getElementById(id));
+  const stepLabel = document.getElementById('stepLabel');
+  const nextBtn = document.getElementById('nextBtn');
+  const backBtn = document.getElementById('backBtn');
+  let current = 1;
+
+  function updateProgress(){
+    progressBars.forEach((bar,i)=>{ bar.style.width = (i < current) ? '100%' : '0%'; });
+    stepLabel.textContent = `Passo ${current} de 5`;
+    backBtn.style.visibility = current === 1 ? 'hidden' : 'visible';
+    nextBtn.textContent = current === 5 ? 'Confirmar marcação' : 'Continuar';
+    if(current === 5) buildSummary();
+  }
+
+  function showStep(n){
+    steps.forEach(s=> s.classList.toggle('active', parseInt(s.dataset.step)===n));
+    updateProgress();
+  }
+
+  function validateStep(n){
+    if(n===1){
+      const ok = state.cat && state.variant;
+      document.getElementById('err1').style.display = ok ? 'none' : 'block';
+      return ok;
+    }
+    return true;
+  }
+
+  nextBtn.addEventListener('click', ()=>{
+    if(!validateStep(current)) return;
+    if(current < 5){ current++; showStep(current); window.scrollTo({top: document.getElementById('marcar').offsetTop-40, behavior:'smooth'}); }
+    else { submitBooking(); }
+  });
+  backBtn.addEventListener('click', ()=>{ if(current>1){ current--; showStep(current);} });
+
+  function kmFee(){
+    const v = parseInt(document.getElementById('bookKm').value);
+    return v;
+  }
+
+  function computeTotal(){
+    if(!state.variant) return 0;
+    let total = state.variant.price;
+    if(state.cat === 'house'){
+      const nights = parseInt(document.getElementById('bookNights').value) || 1;
+      total = state.variant.price * nights;
+    } else if(state.qty > 1){
+      total += (state.qty - 1) * 2.5; // avg extra-animal fee
+    }
+    const km = kmFee();
+    if(km > 0) total += km;
+    return total;
+  }
+
+  function buildSummary(){
+    const km = kmFee();
+    const kmLabel = km === -1 ? 'Sob orçamento' : (km === 0 ? 'Grátis' : `+${km}€`);
+    const total = computeTotal();
+    const totalLabel = km === -1 ? `${state.variant ? state.variant.price : 0}€ + deslocação sob orçamento` : `${total.toFixed(2).replace('.00','')}€`;
+    document.getElementById('summaryBox').innerHTML = `
+      <div class="summary-row"><span>Serviço</span><span>${SERVICES[state.cat].label} — ${state.variant.label}</span></div>
+      <div class="summary-row"><span>Animal</span><span>${document.getElementById('petName').value || '—'} (${document.getElementById('petSpecies').value})</span></div>
+      <div class="summary-row"><span>Quantidade</span><span>${state.qty}</span></div>
+      <div class="summary-row"><span>Data / hora</span><span>${document.getElementById('bookDate').value || '—'} ${document.getElementById('bookTime').value || ''}</span></div>
+      <div class="summary-row"><span>Deslocação</span><span>${kmLabel}</span></div>
+      <div class="summary-row total"><span>Estimativa total</span><span>${totalLabel}</span></div>
+    `;
+  }
+
+  // recompute summary live if user goes back and forth
+  ['bookNights','bookKm'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', ()=>{ if(current===5) buildSummary(); });
+  });
+
+  function submitBooking(){
+    const ref = 'PA-' + Math.random().toString(36).slice(2,7).toUpperCase();
+    const record = {
+      ref, owner: document.getElementById('ownerName').value || 'Sem nome',
+      service: `${SERVICES[state.cat].label} — ${state.variant.label}`,
+      date: document.getElementById('bookDate').value || '—',
+      pet: document.getElementById('petName').value || '—',
+      status: 'pending'
+    };
+    bookings.push(record);
+    renderAdmin();
+
+    document.getElementById('refNum').textContent = ref;
+    document.getElementById('confirmDetails').innerHTML = `
+      <div class="row"><span>Serviço</span><span>${record.service}</span></div>
+      <div class="row"><span>Animal</span><span>${record.pet}</span></div>
+      <div class="row"><span>Data</span><span>${record.date} ${document.getElementById('bookTime').value||''}</span></div>
+      <div class="row"><span>Morada</span><span>${document.getElementById('bookAddress').value||'—'}</span></div>
+      <div class="row"><span>Contacto</span><span>${document.getElementById('ownerPhone').value||'—'}</span></div>
+    `;
+    document.getElementById('site').querySelectorAll('section, header, footer, .sticky-cta').forEach(el=>el.style.display='none');
+    document.getElementById('confirmacao').style.display='block';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  // ---------- admin demo ----------
+  function renderAdmin(){
+    document.getElementById('statTotal').textContent = bookings.length;
+    document.getElementById('statPending').textContent = bookings.filter(b=>b.status==='pending').length;
+    document.getElementById('statAnimals').textContent = new Set(bookings.map(b=>b.pet)).size;
+    const table = document.getElementById('adminTable');
+    table.innerHTML = '<div class="admin-row head"><span>Cliente</span><span>Serviço</span><span>Data</span><span>Animal</span><span>Estado</span></div>';
+    if(bookings.length === 0){
+      table.innerHTML += '<div class="empty-state">Ainda sem marcações nesta sessão. Experimente marcar um serviço no site para ver aqui.</div>';
+      return;
+    }
+    bookings.forEach(b=>{
+      const row = document.createElement('div');
+      row.className = 'admin-row';
+      row.innerHTML = `<span>${b.owner}</span><span>${b.service}</span><span>${b.date}</span><span>${b.pet}</span><span class="status-pill status-${b.status}">${b.status==='pending'?'Por confirmar':'Confirmada'}</span>`;
+      table.appendChild(row);
+    });
+  }
+  renderAdmin();
+
+  document.getElementById('adminLink').addEventListener('click', (e)=>{
+    e.preventDefault();
+    document.getElementById('site').style.display='none';
+    document.getElementById('confirmacao').style.display='none';
+    document.getElementById('admin').style.display='block';
+    window.scrollTo(0,0);
+  });
+  document.getElementById('exitAdmin').addEventListener('click', (e)=>{
+    e.preventDefault();
+    document.getElementById('admin').style.display='none';
+    document.getElementById('site').style.display='block';
+    document.querySelectorAll('#site section, #site header, #site footer').forEach(el=>el.style.display='');
+    document.getElementById('confirmacao').style.display='none';
+  });
+  document.getElementById('backHomeBtn').addEventListener('click', ()=>{
+    document.querySelectorAll('#site section, #site header, #site footer').forEach(el=>el.style.display='');
+    document.getElementById('confirmacao').style.display='none';
+  });
+})();
+</script>
+
+</body>
+</html>
